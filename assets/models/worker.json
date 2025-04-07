@@ -1,0 +1,18 @@
+
+{
+    "_id":"",
+    "id":2558,
+    "name":"nair",
+    "cellphonenumber":"9999999999",
+    "workstation":"admin",
+    "password":"vilchis",
+    "user":"nair",
+    "startdate":"",
+    "workpermits":{
+        "admin":true,
+        "appraiser":true,
+        "advice":true,
+        "warehouseman":true
+        
+     }
+}

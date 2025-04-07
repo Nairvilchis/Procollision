@@ -1,0 +1,100 @@
+{
+"order_id":1000 ,
+"ajustador":"",
+"siniestro":"",
+"piso":true,
+"idAseguradora":1,
+"poliza":"",
+"folio":"",
+"grua":true,
+"deducible":"",
+"serie":"",
+"idAsegurado":1,
+"idMarcaModelo":1,
+"año":2000,
+"placas":"",
+"color":"",
+"aseguradoTercero":"",
+"urlArchivos":"",
+"fechaRegistro":"",
+"fechaValuacion":"",
+"fechaRengreso":"",
+"fechaEntrega":"",
+"fechaPromesa":"",
+"idValuador":1,
+"idAsesor":1,
+"idHojalatero":1,
+"kilometraje":"",
+"idPintor":1,
+"idPresupuesto":1,
+"registro":"",
+"proceso":""
+}
+
+{
+"aseguradora_id":"",
+"aseguradora":"",
+"ajustadores":[{
+    "nombre":"nombre",
+    "telefono"
+
+}]
+}
+
+{
+
+    "asegurado_id":"",
+    "nombre":"",
+    "telefono":"",
+    "correo":"",    
+}
+{
+    "marcaModelo_id":"",
+    "marca":"",
+    "modelo":""
+
+}
+{
+    "personal_id":"",
+    "nombre":"",    
+    "telefono":"",
+    "puesto":"",
+    "contraseña":"",
+    "usuario":"",
+    "fechaIngreso":"",
+    "permisos":{    
+    "admin":true,
+    "valuador":true,
+    "asesor":true,
+    "almacenista":true,
+    }
+
+}
+{
+    "presupuesto_id":"",
+    "conceptos":[{
+        "consepto"
+        "precedimiento":"",
+        "parts_id":""
+
+
+            }],
+}
+{
+
+    "refaccion_id":"",
+    "order_id":"",
+    "refaccion":"",
+    "marcaModelo_id":"",
+    "año":1,
+    "proveedor":"",
+    "fechaPromesa":"",
+    "fechaAlta":"",
+    "numGuia":"",
+    "fechaDevolucion":"",
+    "surtido":true,
+    "observaciones":"",
+
+
+}
+

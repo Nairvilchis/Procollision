@@ -1,0 +1,332 @@
+/*import 'package:flutter/material.dart';
+
+import 'package:get/get.dart';
+
+import '../controllers/order_controller.dart';
+
+class OrderView extends GetView<OrderController> {
+  const OrderView({super.key});
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Orden'),
+        actions: [
+          ElevatedButton.icon(
+            onPressed: () {
+              controller.clearForm();
+              Get.snackbar("Aviso", "Crear Nueva orden");
+            },
+            icon: Icon(Icons.add_box),
+            label: Text("Nueva Orden"),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.blue, // Color del botón
+              foregroundColor: Colors.white, // Color del texto
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+            ),
+          ),
+        ],
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Form(
+            child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Card(
+            elevation: 5,
+            child: Column(
+              children: [
+                Text("Datos de Orden", style: TextStyle(fontSize: 22)),
+                SizedBox(height: 20),
+                Obx(() => TextFormField(
+                      onChanged: (value) => controller.adjuster.value = value,
+                      decoration: InputDecoration(labelText: 'Ajustador'),
+                      initialValue: controller.adjuster.value,
+                    )),
+
+                // Campo de texto: Reclamo
+
+                Obx(() => TextFormField(
+                      onChanged: (value) => controller.claim.value = value,
+                      decoration: InputDecoration(labelText: 'Reclamo'),
+                      initialValue: controller.claim.value,
+                    )),
+                SizedBox(height: 20),
+              ],
+            ),
+          ),
+          // Campo de texto: Ajustador
+          Card(
+              elevation: 5,
+              child: Column(children: [
+                Text("Datos del cliente", style: TextStyle(fontSize: 22)),
+                SizedBox(height: 20),
+
+                // Campo de texto: Póliza
+                Obx(() => TextFormField(
+                      onChanged: (value) => controller.policy.value = value,
+                      decoration: InputDecoration(labelText: 'Póliza'),
+                      initialValue: controller.policy.value,
+                    )),
+
+                // Campo de texto: ID del cliente
+
+                SizedBox(
+                  height: 20,
+                )
+              ])),
+          // Checkbox: ¿Está en el taller?
+
+          // Campo de texto: ID Marca-Modelo
+
+          // Botón para crear la orden
+          SizedBox(height: 20),
+          Center(
+              child: ElevatedButton(
+            onPressed: controller.createOrder,
+            child: Text('Crear Orden'),
+          )),
+        ])),
+      ),
+    );
+  }
+}
+*/
+
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import '../controllers/order_controller.dart';
+
+class OrderView extends GetView<OrderController> {
+  const OrderView({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Orden'),
+        actions: [
+          ElevatedButton.icon(
+            onPressed: () {
+              controller.clearForm();
+              Get.snackbar("Aviso", "Crear Nueva orden");
+            },
+            icon: const Icon(Icons.add_box),
+            label: const Text("Nueva Orden"),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.blue,
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+            ),
+          ),
+        ],
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: SingleChildScrollView(
+          child: Form(
+            child: Column(
+              children: [
+                // Sección: Datos de la Orden
+                _buildCard(
+                  title: "Datos de Orden",
+                  children: [
+                    Wrap(
+                      direction: Axis.horizontal,
+                      children: [
+                        Obx(() => SizedBox(
+                            width: 200,
+                            child: TextFormField(
+                              onChanged: (value) =>
+                                  controller.orderId.value = value,
+                              decoration: const InputDecoration(
+                                labelText: 'Número de Orden',
+                                border: OutlineInputBorder(),
+                              ),
+                              initialValue: controller.orderId.value,
+                            ))),
+                        Obx(() => SizedBox(
+                            width: 200,
+                            child: TextFormField(
+                              onChanged: (value) =>
+                                  controller.folio.value = value,
+                              decoration: const InputDecoration(
+                                labelText: 'Folio',
+                                border: OutlineInputBorder(),
+                              ),
+                              initialValue: controller.folio.value,
+                            ))),
+                        Obx(() => SizedBox(
+                            width: 200,
+                            child: TextFormField(
+                              onChanged: (value) =>
+                                  controller.policy.value = value,
+                              decoration: const InputDecoration(
+                                labelText: 'Poliza',
+                                border: OutlineInputBorder(),
+                              ),
+                              initialValue: controller.policy.value,
+                            ))),
+                        Obx(() => DropdownMenu(
+                              enableSearch: true,
+                              width: 200,
+                              onSelected: (value) {
+                                controller.makeId.value = value;
+                                controller.getModelsByMake(value);
+                              },
+                              label: const Text('Marca'),
+                              dropdownMenuEntries: controller.makes.map((make) {
+                                return DropdownMenuEntry(
+                                  value: make['_id'],
+                                  label: make['Nombre'].toString(),
+                                );
+                              }).toList(),
+                            )),
+                        Obx(() => DropdownMenu(
+                              width: 200,
+                              onSelected: (value) =>
+                                  controller.modelId.value = value,
+                              label: const Text('Modelo'),
+                              dropdownMenuEntries:
+                                  controller.model.map((model) {
+                                return DropdownMenuEntry(
+                                  value: model['_id'],
+                                  label: model['model'].toString(),
+                                );
+                              }).toList(),
+                            )),
+                        Obx(() => DropdownMenu(
+                              width: 200,
+                              onSelected: (value) =>
+                                  controller.year.value = value.toString(),
+                              label: const Text('Año'),
+                              dropdownMenuEntries: controller.years.map((year) {
+                                return DropdownMenuEntry(
+                                  value: year['_id'],
+                                  label: year['year'].toString(),
+                                );
+                              }).toList(),
+                            )),
+                        Obx(() => TextFormField(
+                              onChanged: (value) =>
+                                  controller.adjuster.value = value,
+                              decoration: const InputDecoration(
+                                labelText: 'Ajustsador',
+                                border: OutlineInputBorder(),
+                              ),
+                              initialValue: controller.adjuster.value,
+                            )),
+                        Obx(() => TextFormField(
+                              onChanged: (value) =>
+                                  controller.claim.value = value,
+                              decoration: const InputDecoration(
+                                labelText: 'Reclamo',
+                                border: OutlineInputBorder(),
+                              ),
+                              initialValue: controller.claim.value,
+                            )),
+                      ],
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 20),
+
+                // Sección: Datos del Cliente
+                _buildCard(
+                  title: "Datos del Cliente",
+                  children: [
+                    Obx(() => TextFormField(
+                          onChanged: (value) =>
+                              controller.clientName.value = value,
+                          decoration: const InputDecoration(
+                            labelText: 'Nombre del Cliente',
+                            border: OutlineInputBorder(),
+                          ),
+                          initialValue: controller.policy.value,
+                        )),
+                    Obx(() => Row(
+                          children: [
+                            SizedBox(
+                              width: 600,
+                              child: TextFormField(
+                                onChanged: (value) =>
+                                    controller.clientPhone.value = value,
+                                decoration: const InputDecoration(
+                                  labelText: 'Telefono',
+                                  border: OutlineInputBorder(),
+                                ),
+                                initialValue: controller.clientEmail.value,
+                              ),
+                            ),
+                            ElevatedButton(
+                              onPressed: () => {},
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.green,
+                                foregroundColor: Colors.white,
+                              ),
+                              child: const Text('Enviar WhatsApp'),
+                            ),
+                          ],
+                        )),
+                    Obx(() => TextFormField(
+                          onChanged: (value) => controller.policy.value = value,
+                          decoration: const InputDecoration(
+                            labelText: 'email',
+                            border: OutlineInputBorder(),
+                          ),
+                          initialValue: controller.policy.value,
+                        )),
+                  ],
+                ),
+
+                const SizedBox(height: 20),
+
+                // Botón para crear la orden
+                Center(
+                  child: ElevatedButton(
+                    onPressed: controller.createOrder,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 30, vertical: 15),
+                    ),
+                    child: const Text('Crear Orden'),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  // Método para construir tarjetas uniformes
+  Widget _buildCard({required String title, required List<Widget> children}) {
+    return Card(
+      elevation: 5,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      margin: const EdgeInsets.symmetric(vertical: 10),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              title,
+              style: const TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+                color: Colors.blueAccent,
+              ),
+            ),
+            const SizedBox(height: 20),
+            ...children,
+          ],
+        ),
+      ),
+    );
+  }
+}

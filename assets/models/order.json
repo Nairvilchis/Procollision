@@ -1,19 +1,19 @@
 {
-"order_id":1000 ,
-"ajustador":"",
-"siniestro":"",
-"piso":true,
-"idAseguradora":1,
-"poliza":"",
-"folio":"",
-"grua":true,
+"order_id":1000 ,//ya
+"ajustador":"",//ya
+"siniestro":"",//
+"piso":true,//ya
+"idAseguradora":1,//ya
+"poliza":"",//ya
+"folio":"",//ya
+"grua":true,//ya
 "deducible":"",
-"serie":"",
-"idAsegurado":1,
-"idMarcaModelo":1,
-"año":2000,
-"placas":"",
-"color":"",
+"serie":"",//ya
+"idAsegurado":1,//
+"idMarcaModelo":1,//
+"año":2000,//
+"placas":"",//
+"color":"",//
 "aseguradoTercero":"",
 "urlArchivos":"",
 "fechaRegistro":"",

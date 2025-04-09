@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
@@ -10,72 +12,89 @@ class OrderController extends GetxController {
   void onInit() {
     super.onInit();
     getMakes();
+    getInsurers();
   }
 
   ApiService apiService = Get.find<ApiService>(); // Configura tu baseUrl.
 
   // Variables observables para los campos del formulario
-  final adjuster = ''.obs;
+  final canEdit = false.obs;
+  final btnCreate = false.obs;
+  final btnWhatsapp = true.obs;
+  final insurers = [].obs;
+  final insurerId = "".obs;
+  final adjusterId = "".obs;
+  final adjuster = [].obs;
   final orderId = ''.obs;
   final folio = ''.obs;
-  final vin = ''.obs;
-  final mileage = ''.obs;
+  final vin = ''.obs; //ya
+  final mileage = ''.obs; //ya
   final claim = ''.obs;
   final policy = ''.obs;
-  final clientId = ''.obs;
-  final clientName = ''.obs;
-  final clientPhone = ''.obs;
-  final clientEmail = ''.obs;
-  final client = ''.obs;
-  final modelId = 0.obs;
-  final makeId = 0.obs;
-  final year="".obs;
-  final licensePlates = ''.obs;
-  final color = ''.obs;
+  final clientId = ''.obs; //ya
+  final clientName = ''.obs; //ya
+  final clientPhone = ''.obs; //ya
+  final clientEmail = ''.obs; //ya
+  final modelId = "".obs;//ya
+  final makeId = "".obs;//ya
+  final makes = [].obs;//ya
+  final model = [].obs;//ya
+  final year = "".obs;//ya
+  final licensePlates = ''.obs;//ya
+  final color = ''.obs;//ya
   final deductible = ''.obs;
-  final onFloor = false.obs;
+  final onFloor = true.obs;
   final crane = false.obs;
   final now = DateTime.now();
-  final makes = [].obs;
-  final model = [].obs;
+  final insuredOrThirdPartyvalue = "".obs;
+  
+  final years = [
+    {"_id": "2023", "year": "2023"},
+    {"_id": "2022", "year": "2022"},
+    {"_id": "2021", "year": "2021"},
+    {"_id": "2020", "year": "2020"},
+    {"_id": "2019", "year": "2019"},
+    {"_id": "2018", "year": "2018"},
+    {"_id": "2017", "year": "2017"},
+    {"_id": "2016", "year": "2016"},
+    {"_id": "2015", "year": "2015"},
+    {"_id": "2014", "year": "2014"},
+    {"_id": "2013", "year": "2013"}
+  ].obs;
 
-  final years = [{
-"_id": "2023",
-"year": "2023"
-}, {
-"_id": "2022",
-"year": "2022"
-}, {
-"_id": "2021",
-"year": "2021"
-}, {
-"_id": "2020",
-"year": "2020"
-}, {
-"_id": "2019",
-"year": "2019"
-}, {
-"_id": "2018",
-"year": "2018"
-}, {
-"_id": "2017",
-"year": "2017"
-}, {
-"_id": "2016",
-"year": "2016"
-}, {
-"_id": "2015",
-"year": "2015"
-}, {
-"_id": "2014",
-"year": "2014"
-}, {
-"_id": "2013",
-"year": "2013"
-}].obs;
+  final insuredOrThirdParty = [
+    {"_id": "1", "type": "Asegurado"},
+    {"_id": "2", "type": "Tercero"}
+  ].obs;
   // Método para obtener la lista de marcas
-final box = GetStorage();
 
+  final box = GetStorage();
+
+  Future<void> getInsurers() async {
+    try {
+      final response = await apiService.getInsurers();
+      insurers.value = response;
+    } catch (error) {
+      Get.snackbar(
+        'Error',
+        'No se pudieron obtener las aseguradoras: $error',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    }
+  }
+
+  Future<void> getAdjustersByInsurer(String insurer) async {
+    try {
+      final response = await apiService.getAdjustersByInsurer(insurer);
+      adjuster.value = response;
+    } catch (error) {
+      Get.snackbar(
+        'Error',
+        'No se pudieron obtener los modelos: $error',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    }
+  }
 
   Future<void> getMakes() async {
     try {
@@ -91,7 +110,7 @@ final box = GetStorage();
   }
 
   // Método para obtener la lista de modelos por marca
-  Future<void> getModelsByMake(int make) async {
+  Future<void> getModelsByMake(String make) async {
     try {
       final response = await apiService.getModelsByMake(make);
       model.value = response;
@@ -116,8 +135,8 @@ final box = GetStorage();
       final responseClient = await apiService.addClient(newClient);
 
       final newOrder = {
-        "orderId": orderId.value,
-        "folio": folio.value,
+        "_id": orderId.value, //ya
+        "folio": folio.value, //ya
         "vin": vin.value,
         "clientId": responseClient['_id'],
         "ThirdPartyInsured": "",
@@ -136,7 +155,7 @@ final box = GetStorage();
         "budgetId": 1,
         "registration": "",
         "process": "",
-        "adjuster": adjuster.value,
+        "adjuster": adjusterId.value,
         "claim": claim.value,
         "onfloor": onFloor.value,
         "policy": policy.value,
@@ -163,22 +182,21 @@ final box = GetStorage();
     }
   }
 
-void sendWatsapp()async{
-  String message = box.read("whatsapp_fst_msg");
-  String number = clientPhone.value;
+  void sendWatsapp() async {
+    String message = box.read("whatsapp_fst_msg");
+    String number = "521${clientPhone.value}";
+    var whats = {"number": number, "message": message};
 
-  await apiService.sendWhatsapp({"number":number,message:message});
-  Get.snackbar(
-    'Éxito',
-    'Mensaje enviado por WhatsApp a $number',
-    snackPosition: SnackPosition.BOTTOM,
-  );
-
-  
-}
-
-
-
+    var response = await apiService.sendWhatsapp(whats);
+    if (response["status"] == "ok") {
+      btnWhatsapp.value = false;
+      Get.snackbar(
+        'Éxito',
+        'Mensaje enviado por WhatsApp a $number',
+        snackPosition: SnackPosition.TOP,
+      );
+    }
+  }
 
   // Método para limpiar el formulario
   void clearForm() {

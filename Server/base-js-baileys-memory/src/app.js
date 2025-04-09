@@ -124,7 +124,8 @@ const main = async () => {
       console.log("message", req.body);
       const { number, message, urlMedia } = req.body;
       await bot.sendMessage(number, message, { media: urlMedia ?? null });
-      return res.end("sended");
+      res.writeHead(201, { "Content-Type": "application/json" });
+      return res.end(JSON.stringify({ status: "ok"}));
     })
   );
 

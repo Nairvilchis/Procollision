@@ -13,7 +13,13 @@ class ProcessesModuleView extends GetView<HomeController> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
+        child: GridView(
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 5,
+            childAspectRatio: 2,
+            crossAxisSpacing: 10,
+            mainAxisSpacing: 10,
+          ),
           children: [
             // Botón para "Administración" (visible solo si 'admin' es true)
             Obx(() {

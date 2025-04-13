@@ -5,6 +5,7 @@ import {
   createFlow,
   addKeyword,
   utils,
+  EVENTS,
 } from "@builderbot/bot";
 import { MemoryDB as Database } from "@builderbot/bot";
 import { BaileysProvider as Provider } from "@builderbot/provider-baileys";
@@ -12,99 +13,67 @@ import axios from "axios";
 import { json } from "stream/consumers";
 
 const PORT = process.env.PORT ?? 3008;
-const fullSamplesFlow = addKeyword(["samples", utils.setEvent("SAMPLES")])
-  .addAnswer(`💪 I'll send you a lot files...`)
-  .addAnswer(`Send image from Local`, {
-    media: join(process.cwd(), "assets", "sample.png"),
-  })
-  .addAnswer(`Send video from URL`, {
-    media:
-      "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExYTJ0ZGdjd2syeXAwMjQ4aWdkcW04OWlqcXI3Ynh1ODkwZ25zZWZ1dCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/LCohAb657pSdHv0Q5h/giphy.mp4",
-  })
-  .addAnswer(`Send audio from URL`, {
-    media: "https://cdn.freesound.org/previews/728/728142_11861866-lq.mp3",
-  })
-  .addAnswer(`Send file from URL`, {
-    media:
-      "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
-  });
 
-const registerFlow = addKeyword(utils.setEvent("REGISTER_FLOW"))
-  .addAnswer(
-    `What is your name?`,
-    { capture: true },
-    async (ctx, { state }) => {
-      await state.update({ name: ctx.body });
-    }
-  )
-  .addAnswer("What is your age?", { capture: true }, async (ctx, { state }) => {
-    await state.update({ age: ctx.body });
-  })
-  .addAction(
-    async (_, { flowDynamic, state }) => {
-      await flowDynamic(
-        `${state.get(
-          "name"
-        )}, thanks for your information!: Your age: ${state.get("age")}`
-      );
-    },
-    [fullSamplesFlow]
-  );
-
-const discordFlow = addKeyword("numPrueba").addAnswer(
-  [
-    "Porfavor espera un momento mientras busco tu información... ⏳",
-    "\n ⌛⏳⌛⏳⌛⏳ ",
-  ].join("\n"),
-  { delay: 800 },
-  async ({ flowDynamic }) => {
-    let data = "";
-
-    await axios.get("http://localhost:5000/workers").then((response) => {
-      console.log(response.data);
-      data = response.data;
-    });
-    if (data != "") {
-      await flowDynamic(`Tus datos son los siguientes: ${data}`);
-    } else {
-      await flowDynamic(`No se encontraron datos para el numero de servicio`);
-    }
-  }
-);
-const welcomeFlow = addKeyword(["hi", "hello", "hola"])
+const welcomeFlow = addKeyword(["hi", "hello", "hola", EVENTS.WELCOME])
   .addAnswer(`🙌 Hola Gracias por comunicarte con ProCollision 🤖🚗🛠️🔧*`)
   .addAnswer(
-    [
-      "Si desea saber mas sobre el estado de su vehiculo, por favor escriba *Su numero de servicio*",
-      "👉 *numPrueba* para una prueba del Bot 🤖🚗🛠️🔧",
-    ].join("\n"),
-    { delay: 800, capture: true },
-    async (ctx, { state }) => {
-      await state.update({ numOrder: ctx.body });
-    }
+    "Si desea saber mas sobre el estado de su vehiculo, por favor escriba *Su numero de servicio*"
   )
-  .addAction(async (_, { flowDynamic, state }) => {
-    let data = "";
+  .addAnswer(
+    [
+      "👉 *numOrder* para una prueba del Bot 🤖🚗🛠️🔧",
+      "👉 *numOrder1* para una prueba del Bot 🤖🚗🛠️🔧",
+      "👉 *numOrder2* para una prueba del Bot 🤖🚗🛠️🔧",
+    ].join("\n"),
+    { delay: 800 }
+  )
+  .addAction(
+    { capture: true },
+    async (ctx, { fallBack, flowDynamic, state }) => {
+      await state.update({ numOrder: ctx.body });
+      await state.update({ firsTime: true });
+      let orderData = null;
+      let Clientdata;
 
-    await axios
-      .get("http://localhost:5000/workers")
-      .then((response) => {
-        console.log(response.data);
-        data = response.data;
-      })
-      .finally(() => {
-        console.log("finally");
-      });
-    if (data != "") {
-      await flowDynamic([
-        `${state.get(
-          "numOrder"
-        )}, gracias por tu mensaje, ahora buscaremos la información de la orden de servicio`,
-        `tu informacion es la siguiente:${JSON.stringify(data[0])}`,
-      ]);
+      try {
+        const responseOrder = await axios.get(
+          "http://localhost:5000/order/" + state.get("numOrder")
+        );
+
+        const responseCliente = await axios.get(
+          "http://localhost:5000/client/" + responseOrder.data.client_id
+        );
+        const responseMake = await axios.get(
+          "http://localhost:5000/make/" + responseOrder.data.make
+        );
+        const responseModel = await axios.get(
+          "http://localhost:5000/model/" + responseOrder.data.model
+        );
+        Clientdata = responseCliente.data; // Accede a los datos de la respuesta
+
+        orderData = responseOrder.data; // Accede a los datos de la respuesta
+
+        // Aquí puedes procesar los datos según tus necesidades
+        if (orderData) {
+          await flowDynamic(
+            `*Hola ${Clientdata.name}* \n\n*Su vehiculo es un ${responseMake.data.Nombre} ${responseModel.data.model}* \n\n*El estado de su vehiculo es: ${orderData.status}*`
+          );
+        }
+      } catch (error) {
+        if (error.status === 404) {
+          return fallBack(
+            `No se encontró información para el número de orden proporcionado "${state.get(
+              "numOrder"
+            )}",favor de verificar su numero de orden. Ingreselo de nuevo `
+          );
+        }
+        console.error("Error al obtener los datos del pedido:", error);
+        await flowDynamic(
+          "Hubo un error al obtener la información del pedido. Por favor, inténtelo más tarde."
+        );
+      }
     }
-  })
-  .addAnswer("respuesta tras data");
+  );
 
 const main = async () => {
   const adapterFlow = createFlow([welcomeFlow]);
@@ -125,7 +94,7 @@ const main = async () => {
       const { number, message, urlMedia } = req.body;
       await bot.sendMessage(number, message, { media: urlMedia ?? null });
       res.writeHead(201, { "Content-Type": "application/json" });
-      return res.end(JSON.stringify({ status: "ok"}));
+      return res.end(JSON.stringify({ status: "ok" }));
     })
   );
 

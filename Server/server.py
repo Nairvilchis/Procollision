@@ -89,15 +89,10 @@ def get_worker_by_user(user):
 @app.route('/add_client', methods=['POST'])
 def add_client():
     data = request.get_json()
-    client_document = {
-        "client_id": data.get("client_id"),
-        "name": data.get("name"),
-        "phone": data.get("phone"),
-        "email": data.get("email")
-    }
+
     try:
         client_collection = mongo.db.clients
-        client_id = client_collection.insert_one(client_document).inserted_id
+        client_id = client_collection.insert_one(data).inserted_id
         return jsonify({"message": "Cliente agregado con éxito", "client_id": str(client_id)}), 201
     except Exception as e:
         return jsonify({"error": f"Error al agregar el cliente: {str(e)}"}), 500
@@ -109,35 +104,21 @@ def add_client():
 def get_clients():
     client_collection = mongo.db.clients
     clients = client_collection.find()
-    clients_list = [
-        {
-            "_id": str(client["_id"]),
-            "client_id": client["client_id"],
-            "name": client["name"],
-            "phone": client["phone"],
-            "email": client["email"]
-        }
-        for client in clients
-    ]
-    return jsonify(clients_list), 200
+
+    return jsonify(clients), 200
 
 # Ruta para buscar un cliente por su nombre
 
 
-@app.route('/client/<name>', methods=['GET'])
-def get_client_by_name(name):
+@app.route('/client/<id>', methods=['GET'])
+def get_client_by_name(id):
     client_collection = mongo.db.clients
-    client = client_collection.find_one({"name": name})
+    client = client_collection.find_one({"_id": ObjectId(id)})
 
     if client:
-        client_data = {
-            "_id": str(client["_id"]),
-            "client_id": client["client_id"],
-            "name": client["name"],
-            "phone": client["phone"],
-            "email": client["email"]
-        }
-        return jsonify(client_data), 200
+        client["_id"] = str(client["_id"])  # Convertir ObjectId a string
+        print(jsonify(client))
+        return jsonify(client), 200
     else:
         return jsonify({"error": "Cliente no encontrado"}), 404
 
@@ -196,6 +177,29 @@ def get_adjusters():
     return jsonify(adjusters_list), 200
 
 
+@app.route('/insurer/<id>', methods=['GET'])
+def get_insurer_by_id(id):
+    insurers_collection = mongo.db.insurers
+    insurer = insurers_collection.find_one({"_id": ObjectId(id)})
+    if insurer:
+        insurer["_id"] = str(insurer["_id"])
+        return jsonify(insurer), 200
+    else:
+        return jsonify({"error": "Insurer not found"}), 404
+
+
+@app.route('/adjuster/<id>', methods=['GET'])
+def get_adjuster_by_id(id):
+    adjusters_collection = mongo.db.adjusters
+    adjuster = adjusters_collection.find_one({"_id": ObjectId(id)})
+    if adjuster:
+        adjuster["_id"] = str(adjuster["_id"]),
+
+        return jsonify(adjuster), 200
+    else:
+        return jsonify({"error": "Adjuster not found"}), 404
+
+
 @app.route('/add_adjuster', methods=['POST'])
 def add_adjuster():
     data = request.get_json()
@@ -212,6 +216,7 @@ def add_adjuster():
         return jsonify({"message": "ajustador agregado con éxito", "insurer_id": str(adjuster_id)}), 201
     except Exception as e:
         return jsonify({"error": f"Error al agregar al ajustador: {str(e)}"}), 500
+
 
 @app.route('/adjusters/<insurer_id>', methods=['GET'])
 def get_adjusters_by_insurer(insurer_id):
@@ -337,23 +342,10 @@ def get_budgets():
 @app.route('/orders_by_client/<client_id>', methods=['GET'])
 def get_orders_by_client(client_id):
     orders_collection = mongo.db.orders
-    orders = orders_collection.find({"clientId": int(client_id)})
+    orders = orders_collection.find({"clientId": client_id})
 
-    orders_list = [
-        {
-            "_id": str(order["_id"]),
-            "orderId": order["orderId"],
-            "adjuster": order["adjuster"],
-            "clientId": order["clientId"],
-            "brandModelId": order["brandModelId"],
-            "registrationDate": order["registrationDate"],
-            "process": order["process"]
-        }
-        for order in orders
-    ]
-
-    if orders_list:
-        return jsonify(orders_list), 200
+    if orders:
+        return jsonify(orders), 200
     else:
         return jsonify({"error": "No se encontraron órdenes para este cliente"}), 404
 
@@ -385,21 +377,6 @@ def get_parts_by_order(order_id):
 # Consulta de aseguradora y ajustadores por ID
 
 
-@app.route('/insurer_by_id/<insurer_id>', methods=['GET'])
-def get_insurer_by_id(insurer_id):
-    insurers_collection = mongo.db.insurers
-    insurer = insurers_collection.find_one({"insurer_id": insurer_id})
-
-    if insurer:
-        insurer_data = {
-            "_id": str(insurer["_id"]),
-            "insurer_id": insurer["insurer_id"],
-            "insurer": insurer["insurer"],
-            "adjusters": insurer["adjusters"]
-        }
-        return jsonify(insurer_data), 200
-    else:
-        return jsonify({"error": "Aseguradora no encontrada"}), 404
 
 # Consulta de órdenes con datos de aseguradora asociada
 
@@ -463,22 +440,10 @@ def get_budget_by_order(order_id):
 @app.route('/add_order', methods=['POST'])
 def add_order():
     data = request.get_json()
-    order_document = {
-        "adjuster": data.get("adjuster"),
-        "claim": data.get("claim"),
-        "onFloor": data.get("onFloor"),
-        "policy": data.get("policy"),
-        "clientId": data.get("clientId"),
-        "brandModelId": data.get("brandModelId"),
-        "year": data.get("year"),
-        "licensePlates": data.get("licensePlates"),
-        "color": data.get("color"),
-        "deductible": data.get("deductible"),
-        "crane": data.get("crane")
-    }
+
     try:
         order_collection = mongo.db.orders
-        order_id = order_collection.insert_one(order_document).inserted_id
+        order_id = order_collection.insert_one(data).inserted_id
         return jsonify({"message": "Orden creada con éxito", "order_id": str(order_id)}), 201
     except Exception as e:
         return jsonify({"error": f"Error al agregar la orden: {str(e)}"}), 500
@@ -488,28 +453,46 @@ def add_order():
 
 @app.route('/orders', methods=['GET'])
 def get_orders():
-    order_collection = mongo.db.orders
-    orders = order_collection.find()
-    orders_list = [
-        {
-            "_id": str(order["_id"]),
-            "adjuster": order["adjuster"],
-            "claim": order["claim"],
-            "onFloor": order["onFloor"],
-            "policy": order["policy"],
-            "clientId": order["clientId"],
-            "brandModelId": order["brandModelId"],
-            "year": order["year"],
-            "licensePlates": order["licensePlates"],
-            "color": order["color"],
-            "deductible": order["deductible"],
-            "crane": order["crane"]
-        }
-        for order in orders
-    ]
-    return jsonify(orders_list), 200
+    try:
+        order_collection = mongo.db.orders
+        orders = order_collection.find()
 
-# Ruta para eliminar una orden por ID
+        # Convertir cada documento en la lista a JSON y procesar `_id`
+        orders_list = [
+            {
+                **order,
+                "_id": str(order["_id"])  # Convertir ObjectId a string
+            }
+            for order in orders
+        ]
+
+        return jsonify(orders_list), 200
+
+    except Exception as e:
+        return jsonify({"error": f"Error al obtener las órdenes: {str(e)}"}), 500
+
+
+@app.route('/order/<id>', methods=['GET'])
+def get_order_by_id(id):
+    try:
+        order_collection = mongo.db.orders
+        # Busca la orden por su `_id`
+        order = order_collection.find_one({"order_id": str(id)})
+
+        if order:
+            # Convierte el resultado de BSON a JSON
+            order["_id"] = str(order["_id"])
+            print(order)
+            print(type(order))
+            print(jsonify(order))
+            print(type(jsonify(order)))
+            return jsonify(order), 200
+        else:
+            return jsonify({"error": "Orden no encontrada"}), 404
+    except Exception as e:
+        return jsonify({"error": f"Error al obtener la orden: {str(e)}"}), 500
+
+        # Ruta para eliminar una orden por ID
 
 
 @app.route('/delete_order/<order_id>', methods=['DELETE'])
@@ -529,6 +512,37 @@ def get_makes():
     # Selecciona todo, excluyendo el campo '_id'
     makes = list(mongo.db.make.find({}))
     return jsonify(makes)
+
+
+@app.route('/make/<id>', methods=['GET'])
+def get_make_by_id(id):
+    try:
+        # Convertir el id a ObjectId si es necesario, o usarlo directamente como string/int según tu esquema
+        make = mongo.db.make.find_one({"_id": int(id)})
+        if make:
+            # Convertir ObjectId a string para que sea compatible con JSON
+            make["_id"] = str(make["_id"])
+            return jsonify(make), 200
+        else:
+            return jsonify({"error": f"No se encontró una marca con el id: {id}"}), 404
+    except Exception as e:
+        return jsonify({"error": f"Hubo un problema al procesar la solicitud: {str(e)}"}), 500
+
+
+@app.route('/model/<id>', methods=['GET'])
+def get_model_by_id(id):
+    try:
+        # Filtrar el modelo por su id
+        model = mongo.db.model.find_one({"_id": int(id)})
+        if model:
+            # Convertir ObjectId a string para JSON
+            model["_id"] = str(model["_id"])
+            print(jsonify(model))
+            return jsonify(model), 200
+        else:
+            return jsonify({"error": f"No se encontró un modelo con el id: {id}"}), 404
+    except Exception as e:
+        return jsonify({"error": f"Hubo un problema al procesar la solicitud: {str(e)}"}), 500
 
 
 @app.route('/models/<slug>', methods=['GET'])

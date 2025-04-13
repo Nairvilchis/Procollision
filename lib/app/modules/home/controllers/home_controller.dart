@@ -14,6 +14,7 @@ var currentIndex = 0.obs;
 
 @override
   void onInit() {
+   
     super.onInit();
     final box = GetStorage();
 user.value = box.read("user");
@@ -27,6 +28,14 @@ void changePage(int index){
   currentIndex.value=index;
 update();
 }
+@override
+  void onReady() {
+    // TODO: implement onReady
+    super.onReady();
+     if(Get.arguments != null){
+      Get.snackbar("Error", "No Se Encontro La Orden Solicitada Verifique el Numero de Orden",duration: Duration(seconds: 5),snackPosition:SnackPosition.BOTTOM );
+    }
+  }
 
 }
 

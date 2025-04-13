@@ -13,7 +13,6 @@ class OrderView extends GetView<OrderController> {
         actions: [
           ElevatedButton.icon(
             onPressed: () {
-              controller.clearForm();
               Get.snackbar("Aviso", "Crear Nueva orden");
             },
             icon: const Icon(Icons.add_box),
@@ -105,13 +104,12 @@ class OrderView extends GetView<OrderController> {
                         Obx(() => SizedBox(
                               width: 200,
                               child: TextFormField(
-                                onChanged: (value) =>
-                                    controller.claim.value = value,
+                                onChanged: (value) {},
                                 decoration: const InputDecoration(
                                   labelText: 'Reclamo',
                                   border: OutlineInputBorder(),
                                 ),
-                                initialValue: controller.claim.value,
+                                initialValue: controller.report.value,
                               ),
                             )),
                       ],
@@ -204,12 +202,12 @@ class OrderView extends GetView<OrderController> {
                             width: 200,
                             child: TextFormField(
                               onChanged: (value) =>
-                                  controller.color.value = value,
+                                  controller.colorCar.value = value,
                               decoration: const InputDecoration(
                                 labelText: 'Color',
                                 border: OutlineInputBorder(),
                               ),
-                              initialValue: controller.color.value,
+                              initialValue: controller.colorCar.value,
                             ),
                           )),
                     ],

@@ -5,12 +5,13 @@ class ApiService {
   final String baseUrl;
 
   ApiService(this.baseUrl);
-   Future<ApiService> init() async {
+  Future<ApiService> init() async {
     print('ApiService inicializado');
     return this;
   }
 
-Future<Map<String, dynamic>> sendWhatsapp(Map<String, dynamic> whatsapp) async {
+  Future<Map<String, dynamic>> sendWhatsapp(
+      Map<String, dynamic> whatsapp) async {
     final response = await http.post(
       Uri.parse('http://localhost:3008/v1/messages'),
       headers: {'Content-Type': 'application/json'},
@@ -19,10 +20,10 @@ Future<Map<String, dynamic>> sendWhatsapp(Map<String, dynamic> whatsapp) async {
     if (response.statusCode == 201) {
       return json.decode(response.body);
     } else {
-      throw Exception('Error al agregar el trabajador: ${response.reasonPhrase}');
+      throw Exception(
+          'Error al agregar el trabajador: ${response.reasonPhrase}');
     }
   }
-
 
   // ---- MÉTODOS PARA WORKERS ----
   Future<List<dynamic>> getWorkers() async {
@@ -30,7 +31,8 @@ Future<Map<String, dynamic>> sendWhatsapp(Map<String, dynamic> whatsapp) async {
     if (response.statusCode == 200) {
       return json.decode(response.body);
     } else {
-      throw Exception('Error al obtener los trabajadores: ${response.reasonPhrase}');
+      throw Exception(
+          'Error al obtener los trabajadores: ${response.reasonPhrase}');
     }
   }
 
@@ -43,7 +45,8 @@ Future<Map<String, dynamic>> sendWhatsapp(Map<String, dynamic> whatsapp) async {
     if (response.statusCode == 201) {
       return json.decode(response.body);
     } else {
-      throw Exception('Error al agregar el trabajador: ${response.reasonPhrase}');
+      throw Exception(
+          'Error al agregar el trabajador: ${response.reasonPhrase}');
     }
   }
 
@@ -62,7 +65,8 @@ Future<Map<String, dynamic>> sendWhatsapp(Map<String, dynamic> whatsapp) async {
     if (response.statusCode == 200) {
       return json.decode(response.body);
     } else {
-      throw Exception('Error al obtener los clientes: ${response.reasonPhrase}');
+      throw Exception(
+          'Error al obtener los clientes: ${response.reasonPhrase}');
     }
   }
 
@@ -79,8 +83,8 @@ Future<Map<String, dynamic>> sendWhatsapp(Map<String, dynamic> whatsapp) async {
     }
   }
 
-  Future<Map<String, dynamic>> getClientByName(String name) async {
-    final response = await http.get(Uri.parse('$baseUrl/client/$name'));
+  Future<Map<String, dynamic>> getClientById(String Id) async {
+    final response = await http.get(Uri.parse('$baseUrl/client/$Id'));
     if (response.statusCode == 200) {
       return json.decode(response.body);
     } else {
@@ -94,7 +98,18 @@ Future<Map<String, dynamic>> sendWhatsapp(Map<String, dynamic> whatsapp) async {
     if (response.statusCode == 200) {
       return json.decode(response.body);
     } else {
-      throw Exception('Error al obtener las aseguradoras: ${response.reasonPhrase}');
+      throw Exception(
+          'Error al obtener las aseguradoras: ${response.reasonPhrase}');
+    }
+  }
+
+  Future<Map<String, dynamic>> getInsurerById(String id) async {
+    final response = await http.get(Uri.parse('$baseUrl/insurer/$id'));
+    if (response.statusCode == 200) {
+      return json.decode(response.body);
+    } else {
+      throw Exception(
+          'Error al obtener el modelo de la marca $id: ${response.reasonPhrase}');
     }
   }
 
@@ -107,12 +122,10 @@ Future<Map<String, dynamic>> sendWhatsapp(Map<String, dynamic> whatsapp) async {
     if (response.statusCode == 201) {
       return json.decode(response.body);
     } else {
-      throw Exception('Error al agregar la aseguradora: ${response.reasonPhrase}');
+      throw Exception(
+          'Error al agregar la aseguradora: ${response.reasonPhrase}');
     }
   }
-
-
-
 
   // ---- MÉTODOS PARA INSURERS ----
   Future<List<dynamic>> getAdjuster() async {
@@ -120,11 +133,13 @@ Future<Map<String, dynamic>> sendWhatsapp(Map<String, dynamic> whatsapp) async {
     if (response.statusCode == 200) {
       return json.decode(response.body);
     } else {
-      throw Exception('Error al obtener los ajustadores ${response.reasonPhrase}');
+      throw Exception(
+          'Error al obtener los ajustadores ${response.reasonPhrase}');
     }
   }
 
-  Future<Map<String, dynamic>> addAdjuster(Map<String, dynamic> adjuster) async {
+  Future<Map<String, dynamic>> addAdjuster(
+      Map<String, dynamic> adjuster) async {
     final response = await http.post(
       Uri.parse('$baseUrl/add_adjuster'),
       headers: {'Content-Type': 'application/json'},
@@ -133,21 +148,30 @@ Future<Map<String, dynamic>> sendWhatsapp(Map<String, dynamic> whatsapp) async {
     if (response.statusCode == 201) {
       return json.decode(response.body);
     } else {
-      throw Exception('Error al agregar la aseguradora: ${response.reasonPhrase}');
+      throw Exception(
+          'Error al agregar la aseguradora: ${response.reasonPhrase}');
     }
   }
 
-Future<List<dynamic>> getAdjustersByInsurer(String insurerId) async {
-  final response = await http.get(Uri.parse('$baseUrl/adjusters/$insurerId'));
-  if (response.statusCode == 200) {
-    return json.decode(response.body); // Devuelve la lista decodificada
-  } else {
-    throw Exception('Error al obtener los ajustadores: ${response.reasonPhrase}');
+  Future<List<dynamic>> getAdjustersByInsurer(String insurerId) async {
+    final response = await http.get(Uri.parse('$baseUrl/adjusters/$insurerId'));
+    if (response.statusCode == 200) {
+      return json.decode(response.body); // Devuelve la lista decodificada
+    } else {
+      throw Exception(
+          'Error al obtener los ajustadores: ${response.reasonPhrase}');
+    }
   }
-}
-  
 
-
+  Future<Map<String, dynamic>> getAdjusterById(String id) async {
+    final response = await http.get(Uri.parse('$baseUrl/adjuster/$id'));
+    if (response.statusCode == 200) {
+      return json.decode(response.body);
+    } else {
+      throw Exception(
+          'Error al obtener el modelo de la marca $id: ${response.reasonPhrase}');
+    }
+  }
 
   // ---- MÉTODOS PARA brandModels ----
   Future<List<dynamic>> getBrandModels() async {
@@ -155,11 +179,13 @@ Future<List<dynamic>> getAdjustersByInsurer(String insurerId) async {
     if (response.statusCode == 200) {
       return json.decode(response.body);
     } else {
-      throw Exception('Error al obtener las marcas-modelos: ${response.reasonPhrase}');
+      throw Exception(
+          'Error al obtener las marcas-modelos: ${response.reasonPhrase}');
     }
   }
 
-  Future<Map<String, dynamic>> addBrandModel(Map<String, dynamic> brandModel) async {
+  Future<Map<String, dynamic>> addBrandModel(
+      Map<String, dynamic> brandModel) async {
     final response = await http.post(
       Uri.parse('$baseUrl/add_brandModel'),
       headers: {'Content-Type': 'application/json'},
@@ -168,7 +194,8 @@ Future<List<dynamic>> getAdjustersByInsurer(String insurerId) async {
     if (response.statusCode == 201) {
       return json.decode(response.body);
     } else {
-      throw Exception('Error al agregar marca-modelo: ${response.reasonPhrase}');
+      throw Exception(
+          'Error al agregar marca-modelo: ${response.reasonPhrase}');
     }
   }
 
@@ -178,7 +205,8 @@ Future<List<dynamic>> getAdjustersByInsurer(String insurerId) async {
     if (response.statusCode == 200) {
       return json.decode(response.body);
     } else {
-      throw Exception('Error al obtener los presupuestos: ${response.reasonPhrase}');
+      throw Exception(
+          'Error al obtener los presupuestos: ${response.reasonPhrase}');
     }
   }
 
@@ -191,16 +219,19 @@ Future<List<dynamic>> getAdjustersByInsurer(String insurerId) async {
     if (response.statusCode == 201) {
       return json.decode(response.body);
     } else {
-      throw Exception('Error al agregar el presupuesto: ${response.reasonPhrase}');
+      throw Exception(
+          'Error al agregar el presupuesto: ${response.reasonPhrase}');
     }
   }
 
   Future<Map<String, dynamic>> getBudgetByOrder(String orderId) async {
-    final response = await http.get(Uri.parse('$baseUrl/budget_by_order/$orderId'));
+    final response =
+        await http.get(Uri.parse('$baseUrl/budget_by_order/$orderId'));
     if (response.statusCode == 200) {
       return json.decode(response.body);
     } else {
-      throw Exception('Presupuesto no encontrado para esta orden: ${response.reasonPhrase}');
+      throw Exception(
+          'Presupuesto no encontrado para esta orden: ${response.reasonPhrase}');
     }
   }
 
@@ -228,11 +259,13 @@ Future<List<dynamic>> getAdjustersByInsurer(String insurerId) async {
   }
 
   Future<List<dynamic>> getPartsByOrder(String orderId) async {
-    final response = await http.get(Uri.parse('$baseUrl/parts_by_order/$orderId'));
+    final response =
+        await http.get(Uri.parse('$baseUrl/parts_by_order/$orderId'));
     if (response.statusCode == 200) {
       return json.decode(response.body);
     } else {
-      throw Exception('Partes no encontradas para esta orden: ${response.reasonPhrase}');
+      throw Exception(
+          'Partes no encontradas para esta orden: ${response.reasonPhrase}');
     }
   }
 
@@ -260,44 +293,96 @@ Future<List<dynamic>> getAdjustersByInsurer(String insurerId) async {
   }
 
   Future<List<dynamic>> getOrdersByClient(String clientId) async {
-    final response = await http.get(Uri.parse('$baseUrl/orders_by_client/$clientId'));
+    final response =
+        await http.get(Uri.parse('$baseUrl/orders_by_client/$clientId'));
     if (response.statusCode == 200) {
       return json.decode(response.body);
     } else {
-      throw Exception('Órdenes no encontradas para este cliente: ${response.reasonPhrase}');
+      throw Exception(
+          'Órdenes no encontradas para este cliente: ${response.reasonPhrase}');
     }
   }
 
   Future<List<dynamic>> getOrdersWithInsurer(String insurerId) async {
-    final response = await http.get(Uri.parse('$baseUrl/orders_with_insurer/$insurerId'));
+    final response =
+        await http.get(Uri.parse('$baseUrl/orders_with_insurer/$insurerId'));
     if (response.statusCode == 200) {
       return json.decode(response.body);
     } else {
-      throw Exception('No se encontraron órdenes para esta aseguradora: ${response.reasonPhrase}');
+      throw Exception(
+          'No se encontraron órdenes para esta aseguradora: ${response.reasonPhrase}');
     }
   }
 
 // ---- MÉTODOS PARA MAKES ----
-Future<List<dynamic>> getMakes() async {
-  final response = await http.get(Uri.parse('$baseUrl/makes'));
-  if (response.statusCode == 200) {
-    return json.decode(response.body);
-  } else {
-    throw Exception('Error al obtener las marcas: ${response.reasonPhrase}');
+  Future<List<dynamic>> getMakes() async {
+    final response = await http.get(Uri.parse('$baseUrl/makes'));
+    if (response.statusCode == 200) {
+      return json.decode(response.body);
+    } else {
+      throw Exception('Error al obtener las marcas: ${response.reasonPhrase}');
+    }
   }
-}
 
 // ---- MÉTODOS PARA MODELS ----
-Future<List<dynamic>> getModelsByMake(String make) async {
-  final response = await http.get(Uri.parse('$baseUrl/models/$make'));
-  if (response.statusCode == 200) {
-    return json.decode(response.body);
-  } else {
-    throw Exception('Error al obtener los modelos de la marca $make: ${response.reasonPhrase}');
+  Future<List<dynamic>> getModelsByMake(String make) async {
+    final response = await http.get(Uri.parse('$baseUrl/models/$make'));
+    if (response.statusCode == 200) {
+      return json.decode(response.body);
+    } else {
+      throw Exception(
+          'Error al obtener los modelos de la marca $make: ${response.reasonPhrase}');
+    }
   }
-}
 
+  Future<Map<String, dynamic>> getModelById(String id) async {
+    final response = await http.get(Uri.parse('$baseUrl/model/$id'));
+    if (response.statusCode == 200) {
+      return json.decode(response.body);
+    } else {
+      throw Exception(
+          'Error al obtener el modelo de la marca $id: ${response.reasonPhrase}');
+    }
+  }
 
+  Future<Map<String, dynamic>> getOrderById(String id) async {
+    final response = await http
+        .get(Uri.parse('$baseUrl/order/$id')); // Ruta específica para una orden
+    if (response.statusCode == 200) {
+      return json
+          .decode(response.body); // Decodifica y retorna un mapa de la orden
+    } else {
+      throw Exception(
+          'Error al obtener la orden con ID $id: ${response.reasonPhrase}');
+    }
+  }
 
-  
+  Future<Map<String, dynamic>> getMakeById(String id) async {
+    final response = await http
+        .get(Uri.parse('$baseUrl/make/$id')); // Ruta específica para una orden
+    if (response.statusCode == 200) {
+      return json
+          .decode(response.body); // Decodifica y retorna un mapa de la orden
+    } else {
+      throw Exception(
+          'Error al obtener la orden con ID $id: ${response.reasonPhrase}');
+    }
+  }
+
+  Future<Map<String, dynamic>> updateOrder(
+      String id, Map<String, dynamic> order) async {
+    final response = await http.put(
+      Uri.parse(
+          '$baseUrl/update_order/$id'), // Ruta específica para actualizar una orden
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode(order),
+    );
+    if (response.statusCode == 200) {
+      return json.decode(response
+          .body); // Decodifica y retorna un mapa de la orden actualizada
+    } else {
+      throw Exception(
+          'Error al actualizar la orden con ID $id: ${response.reasonPhrase}');
+    }
+  }
 }

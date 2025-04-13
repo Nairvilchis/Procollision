@@ -10,21 +10,7 @@ class OrderView extends GetView<OrderController> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Orden'),
-        actions: [
-          ElevatedButton.icon(
-            onPressed: () {
-              controller.clearForm();
-              Get.snackbar("Aviso", "Crear Nueva orden");
-            },
-            icon: const Icon(Icons.add_box),
-            label: const Text("Nueva Orden"),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.blue,
-              foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-            ),
-          ),
-        ],
+        
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -40,45 +26,51 @@ class OrderView extends GetView<OrderController> {
                     Wrap(
                       direction: Axis.horizontal,
                       children: [
-                        Obx(() => SizedBox(
+                        SizedBox(
                             width: 200,
-                            child: TextFormField(
-                              enabled: controller.canEdit.value,
-                              onChanged: (value) =>
-                                  controller.orderId.value = value,
-                              decoration: const InputDecoration(
-                                labelText: 'Número de Orden',
-                                border: OutlineInputBorder(),
+                            child: Obx(
+                              () => TextFormField(
+                                enabled: controller.canEdit.value,
+                                controller: controller.orderIdController,
+                                onChanged: (value) =>
+                                    controller.orderId.value = value,
+                                decoration: const InputDecoration(
+                                  labelText: 'Número de Orden',
+                                  border: OutlineInputBorder(),
+                                ),
                               ),
-                              initialValue: controller.orderId.value,
-                            ))),
-                        Obx(() => SizedBox(
+                            )),
+                        SizedBox(
                             width: 200,
-                            child: TextFormField(
-                              enabled: controller.canEdit.value,
-                              onChanged: (value) =>
-                                  controller.folio.value = value,
-                              decoration: const InputDecoration(
-                                labelText: 'Folio',
-                                border: OutlineInputBorder(),
-                              ),
-                              initialValue: controller.folio.value,
-                            ))),
-                        Obx(() => SizedBox(
+                            child: Obx(() => TextFormField(
+                                  controller: controller.folioController,
+                                  enabled: controller.canEdit.value,
+                                  onChanged: (value) =>
+                                      controller.folio.value = value,
+                                  decoration: const InputDecoration(
+                                    labelText: 'Folio',
+                                    border: OutlineInputBorder(),
+                                  ),
+                                  
+                                ))),
+                        SizedBox(
                             width: 200,
-                            child: TextFormField(
-                              enabled: controller.canEdit.value,
-                              onChanged: (value) =>
-                                  controller.policy.value = value,
-                              decoration: const InputDecoration(
-                                labelText: 'Poliza',
-                                border: OutlineInputBorder(),
-                              ),
-                              initialValue: controller.policy.value,
-                            ))),
+                            child: Obx(() => TextFormField(
+                                  controller: controller.policyController,
+                                  enabled: controller.canEdit.value,
+                                  onChanged: (value) =>
+                                      controller.policy.value = value,
+                                  decoration: const InputDecoration(
+                                    labelText: 'Poliza',
+                                    border: OutlineInputBorder(),
+                                  ),
+                                 
+                                ))),
                         Obx(() => DropdownMenu(
+                              controller: controller.insurerIdController,
                               enabled: controller.canEdit.value,
                               width: 200,
+                             
                               onSelected: (value) {
                                 controller.getAdjustersByInsurer(value);
                                 controller.insurerId.value = value.toString();
@@ -93,6 +85,9 @@ class OrderView extends GetView<OrderController> {
                               }).toList(),
                             )),
                         Obx(() => DropdownMenu(
+                              initialSelection:
+                                  controller.adjusterIdController.text,
+                              controller: controller.adjusterIdController,
                               enabled: controller.canEdit.value,
                               width: 200,
                               onSelected: (value) {
@@ -108,33 +103,39 @@ class OrderView extends GetView<OrderController> {
                               }).toList(),
                             )),
                         Obx(() => DropdownMenu(
+                             
+                              controller:
+                                  controller.insuredOrThirdPartyvalueController,
                               enabled: controller.canEdit.value,
                               width: 200,
                               onSelected: (value) {
-                                controller.insuredOrThirdPartyvalue.value = value.toString();
+                                controller.insuredOrThirdPartyvalue.value =
+                                    value.toString();
                               },
                               label: const Text('asegurado o tercero'),
-                              dropdownMenuEntries:
-                                  controller.insuredOrThirdParty.map((insuOrThirt) {
+                              dropdownMenuEntries: controller
+                                  .insuredOrThirdParty
+                                  .map((insuOrThirt) {
                                 return DropdownMenuEntry(
                                   value: insuOrThirt['_id'],
                                   label: insuOrThirt['type'].toString(),
                                 );
                               }).toList(),
                             )),
-                        Obx(() => SizedBox(
-                              width: 200,
-                              child: TextFormField(
+                        SizedBox(
+                          width: 200,
+                          child: Obx(() => TextFormField(
+                                controller: controller.reportController,
                                 enabled: controller.canEdit.value,
                                 onChanged: (value) =>
-                                    controller.claim.value = value,
+                                    controller.report.value = value,
                                 decoration: const InputDecoration(
                                   labelText: 'Reclamo',
                                   border: OutlineInputBorder(),
                                 ),
-                                initialValue: controller.claim.value,
-                              ),
-                            )),
+                               
+                              )),
+                        ),
                         Obx(() => _buildCheckbox(
                             title: "En piso",
                             value: controller.onFloor.value,
@@ -147,6 +148,24 @@ class OrderView extends GetView<OrderController> {
                             onChanged: (value) {
                               controller.crane.value = value!;
                             })),
+                        Obx(() => DropdownMenu(
+                            
+                              controller: controller.statusProgressController,
+                              enabled: controller.canEdit.value,
+                              width: 200,
+                              onSelected: (value) {
+                                controller.statusProgress.value =
+                                    value.toString();
+                              },
+                              label: const Text('Status'),
+                              dropdownMenuEntries:
+                                  controller.status.map((status) {
+                                return DropdownMenuEntry(
+                                  value: status['_id'],
+                                  label: status['status'].toString(),
+                                );
+                              }).toList(),
+                            )),
                       ],
                     ),
                   ],
@@ -159,6 +178,8 @@ class OrderView extends GetView<OrderController> {
                     direction: Axis.horizontal,
                     children: [
                       Obx(() => DropdownMenu(
+                          
+                            controller: controller.makeIdController,
                             enabled: controller.canEdit.value,
                             width: 200,
                             onSelected: (value) {
@@ -174,6 +195,8 @@ class OrderView extends GetView<OrderController> {
                             }).toList(),
                           )),
                       Obx(() => DropdownMenu(
+                          
+                            controller: controller.modelIdController,
                             enabled: controller.canEdit.value,
                             width: 200,
                             onSelected: (value) =>
@@ -187,6 +210,8 @@ class OrderView extends GetView<OrderController> {
                             }).toList(),
                           )),
                       Obx(() => DropdownMenu(
+                            
+                            controller: controller.yearIdController,
                             enabled: controller.canEdit.value,
                             width: 200,
                             onSelected: (value) =>
@@ -199,9 +224,10 @@ class OrderView extends GetView<OrderController> {
                               );
                             }).toList(),
                           )),
-                      Obx(() => SizedBox(
-                            width: 200,
-                            child: TextFormField(
+                      SizedBox(
+                        width: 200,
+                        child: Obx(() => TextFormField(
+                              controller: controller.licensePlatesController,
                               enabled: controller.canEdit.value,
                               onChanged: (value) =>
                                   controller.licensePlates.value = value,
@@ -209,12 +235,13 @@ class OrderView extends GetView<OrderController> {
                                 labelText: 'Placas',
                                 border: OutlineInputBorder(),
                               ),
-                              initialValue: controller.licensePlates.value,
-                            ),
-                          )),
-                      Obx(() => SizedBox(
-                            width: 300,
-                            child: TextFormField(
+                              
+                            )),
+                      ),
+                      SizedBox(
+                        width: 300,
+                        child: Obx(() => TextFormField(
+                              controller: controller.vinController,
                               enabled: controller.canEdit.value,
                               onChanged: (value) =>
                                   controller.vin.value = value,
@@ -222,12 +249,13 @@ class OrderView extends GetView<OrderController> {
                                 labelText: 'VIN',
                                 border: OutlineInputBorder(),
                               ),
-                              initialValue: controller.vin.value,
-                            ),
-                          )),
-                      Obx(() => SizedBox(
-                            width: 200,
-                            child: TextFormField(
+                             
+                            )),
+                      ),
+                      SizedBox(
+                        width: 200,
+                        child: Obx(() => TextFormField(
+                              controller: controller.mileageController,
                               enabled: controller.canEdit.value,
                               onChanged: (value) =>
                                   controller.mileage.value = value,
@@ -235,21 +263,24 @@ class OrderView extends GetView<OrderController> {
                                 labelText: 'Kilometraje',
                                 border: OutlineInputBorder(),
                               ),
-                              initialValue: controller.mileage.value,
-                            ),
-                          )),
-                      Obx(() => SizedBox(
+                              
+                            )),
+                      ),
+                      Obx(() => DropdownMenu(
+                           
+                            controller: controller.colorCarController,
+                            enabled: controller.canEdit.value,
                             width: 200,
-                            child: TextFormField(
-                              enabled: controller.canEdit.value,
-                              onChanged: (value) =>
-                                  controller.color.value = value,
-                              decoration: const InputDecoration(
-                                labelText: 'Color',
-                                border: OutlineInputBorder(),
-                              ),
-                              initialValue: controller.color.value,
-                            ),
+                            onSelected: (value) =>
+                                controller.colorCar.value = value.toString(),
+                            label: const Text('Color'),
+                            dropdownMenuEntries:
+                                controller.colorsCars.map((year) {
+                              return DropdownMenuEntry(
+                                value: year['_id'],
+                                label: year['color'].toString(),
+                              );
+                            }).toList(),
                           )),
                     ],
                   )
@@ -260,9 +291,10 @@ class OrderView extends GetView<OrderController> {
                 _buildCard(
                   title: "Datos del Cliente",
                   children: [
-                    Obx(() => SizedBox(
-                          width: 600,
-                          child: TextFormField(
+                    SizedBox(
+                      width: 600,
+                      child: Obx(() => TextFormField(
+                            controller: controller.clientNameController,
                             enabled: controller.canEdit.value,
                             onChanged: (value) =>
                                 controller.clientName.value = value,
@@ -270,23 +302,25 @@ class OrderView extends GetView<OrderController> {
                               labelText: 'Nombre del Cliente',
                               border: OutlineInputBorder(),
                             ),
-                            initialValue: controller.policy.value,
-                          ),
-                        )),
+                         
+                          )),
+                    ),
                     Obx(() => Wrap(
                           children: [
                             SizedBox(
                               width: 600,
-                              child: TextFormField(
-                                enabled: controller.canEdit.value,
-                                onChanged: (value) =>
-                                    controller.clientPhone.value = value,
-                                decoration: const InputDecoration(
-                                  labelText: 'Telefono',
-                                  border: OutlineInputBorder(),
-                                ),
-                                initialValue: controller.clientPhone.value,
-                              ),
+                              child: Obx(() => TextFormField(
+                                    controller:
+                                        controller.clientPhoneController,
+                                    enabled: controller.canEdit.value,
+                                    onChanged: (value) =>
+                                        controller.clientPhone.value = value,
+                                    decoration: const InputDecoration(
+                                      labelText: 'Telefono',
+                                      border: OutlineInputBorder(),
+                                    ),
+                                   
+                                  )),
                             ),
                             ElevatedButton.icon(
                               icon: const Icon(Icons.send),
@@ -308,9 +342,10 @@ class OrderView extends GetView<OrderController> {
                             ),
                           ],
                         )),
-                    Obx(() => SizedBox(
-                          width: 600,
-                          child: TextFormField(
+                    SizedBox(
+                      width: 600,
+                      child: Obx(() => TextFormField(
+                            controller: controller.clientEmailController,
                             enabled: controller.canEdit.value,
                             onChanged: (value) =>
                                 controller.clientEmail.value = value,
@@ -318,9 +353,9 @@ class OrderView extends GetView<OrderController> {
                               labelText: 'email',
                               border: OutlineInputBorder(),
                             ),
-                            initialValue: controller.clientEmail.value,
-                          ),
-                        )),
+                           
+                          )),
+                    ),
                   ],
                 ),
 

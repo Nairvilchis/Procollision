@@ -40,8 +40,8 @@ class ProcessesModuleView extends GetView<HomeController> {
               if (controller.workpermits().admin ?? false) {
                 return ElevatedButton(
                   onPressed: () {
-                    Get.snackbar('Acceso', 'Entrando al módulo de creación de órdenes');
-                    Get.toNamed("/order");
+                    Get.snackbar('Acceso', 'Entrando al módulo de creación de órdenes',snackPosition: SnackPosition.BOTTOM);
+                    Get.toNamed("/order",arguments: {"numOrder": null});
                   },
                   child: Text('Crear Orden'),
                 );

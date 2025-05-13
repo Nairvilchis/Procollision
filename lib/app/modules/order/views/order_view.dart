@@ -10,7 +10,26 @@ class OrderView extends GetView<OrderController> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Orden'),
-        
+        actions: [
+          Container(child: Obx(()=> 
+            controller.createUpdate.value
+                ? SizedBox():ElevatedButton.icon(
+                    onPressed: () {
+                     
+                      controller.canEdit.value = !controller.canEdit.value;
+                    },
+                    icon: const Icon(Icons.add_box),
+                    label: const Text("Modificar"),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 15),
+                    ),
+                  )
+                
+          ))
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -51,7 +70,6 @@ class OrderView extends GetView<OrderController> {
                                     labelText: 'Folio',
                                     border: OutlineInputBorder(),
                                   ),
-                                  
                                 ))),
                         SizedBox(
                             width: 200,
@@ -64,13 +82,11 @@ class OrderView extends GetView<OrderController> {
                                     labelText: 'Poliza',
                                     border: OutlineInputBorder(),
                                   ),
-                                 
                                 ))),
                         Obx(() => DropdownMenu(
                               controller: controller.insurerIdController,
                               enabled: controller.canEdit.value,
                               width: 200,
-                             
                               onSelected: (value) {
                                 controller.getAdjustersByInsurer(value);
                                 controller.insurerId.value = value.toString();
@@ -103,7 +119,6 @@ class OrderView extends GetView<OrderController> {
                               }).toList(),
                             )),
                         Obx(() => DropdownMenu(
-                             
                               controller:
                                   controller.insuredOrThirdPartyvalueController,
                               enabled: controller.canEdit.value,
@@ -133,7 +148,6 @@ class OrderView extends GetView<OrderController> {
                                   labelText: 'Reclamo',
                                   border: OutlineInputBorder(),
                                 ),
-                               
                               )),
                         ),
                         Obx(() => _buildCheckbox(
@@ -149,7 +163,6 @@ class OrderView extends GetView<OrderController> {
                               controller.crane.value = value!;
                             })),
                         Obx(() => DropdownMenu(
-                            
                               controller: controller.statusProgressController,
                               enabled: controller.canEdit.value,
                               width: 200,
@@ -178,7 +191,6 @@ class OrderView extends GetView<OrderController> {
                     direction: Axis.horizontal,
                     children: [
                       Obx(() => DropdownMenu(
-                          
                             controller: controller.makeIdController,
                             enabled: controller.canEdit.value,
                             width: 200,
@@ -195,7 +207,6 @@ class OrderView extends GetView<OrderController> {
                             }).toList(),
                           )),
                       Obx(() => DropdownMenu(
-                          
                             controller: controller.modelIdController,
                             enabled: controller.canEdit.value,
                             width: 200,
@@ -210,7 +221,6 @@ class OrderView extends GetView<OrderController> {
                             }).toList(),
                           )),
                       Obx(() => DropdownMenu(
-                            
                             controller: controller.yearIdController,
                             enabled: controller.canEdit.value,
                             width: 200,
@@ -235,7 +245,6 @@ class OrderView extends GetView<OrderController> {
                                 labelText: 'Placas',
                                 border: OutlineInputBorder(),
                               ),
-                              
                             )),
                       ),
                       SizedBox(
@@ -249,7 +258,6 @@ class OrderView extends GetView<OrderController> {
                                 labelText: 'VIN',
                                 border: OutlineInputBorder(),
                               ),
-                             
                             )),
                       ),
                       SizedBox(
@@ -263,11 +271,9 @@ class OrderView extends GetView<OrderController> {
                                 labelText: 'Kilometraje',
                                 border: OutlineInputBorder(),
                               ),
-                              
                             )),
                       ),
                       Obx(() => DropdownMenu(
-                           
                             controller: controller.colorCarController,
                             enabled: controller.canEdit.value,
                             width: 200,
@@ -302,7 +308,6 @@ class OrderView extends GetView<OrderController> {
                               labelText: 'Nombre del Cliente',
                               border: OutlineInputBorder(),
                             ),
-                         
                           )),
                     ),
                     Obx(() => Wrap(
@@ -319,7 +324,6 @@ class OrderView extends GetView<OrderController> {
                                       labelText: 'Telefono',
                                       border: OutlineInputBorder(),
                                     ),
-                                   
                                   )),
                             ),
                             ElevatedButton.icon(
@@ -353,7 +357,6 @@ class OrderView extends GetView<OrderController> {
                               labelText: 'email',
                               border: OutlineInputBorder(),
                             ),
-                           
                           )),
                     ),
                   ],
@@ -362,22 +365,37 @@ class OrderView extends GetView<OrderController> {
                 const SizedBox(height: 20),
 
                 // Botón para crear la orden
-                Center(
-                  child: ElevatedButton(
-                    onPressed: controller.btnCreate.value
-                        ? controller.createOrder
-                        : null,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: controller.btnWhatsapp.value
-                          ? Colors.green
-                          : Colors.grey,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 30, vertical: 15),
-                    ),
-                    child: const Text('Crear Orden'),
-                  ),
-                ),
+                Obx(() => Center(
+                      child: controller.createUpdate.value
+                          ? ElevatedButton(
+                              onPressed: controller.btnCreate.value
+                                  ? controller.createOrder
+                                  : null,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: controller.btnWhatsapp.value
+                                    ? Colors.green
+                                    : Colors.grey,
+                                foregroundColor: Colors.white,
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 30, vertical: 15),
+                              ),
+                              child: const Text('Crear Orden'),
+                            )
+                          : ElevatedButton(
+                              onPressed: controller.btnCreate.value
+                                  ? controller.createOrder
+                                  : null,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: controller.btnWhatsapp.value
+                                    ? Colors.green
+                                    : Colors.grey,
+                                foregroundColor: Colors.white,
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 30, vertical: 15),
+                              ),
+                              child: const Text('Actualizar Datos'),
+                            ),
+                    )),
               ],
             ),
           ),

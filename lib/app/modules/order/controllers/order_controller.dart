@@ -11,6 +11,7 @@ class OrderController extends GetxController {
   var order = null;
 
   // Variables observables para los campos del formulario
+  final createUpdate = true.obs;
   final canEdit = true.obs;
   final btnCreate = true.obs;
   final btnWhatsapp = true.obs;
@@ -125,13 +126,13 @@ class OrderController extends GetxController {
   void onInit() async {
     super.onInit();
     start();
+    getMakes();
+    getInsurers();
   }
 
   @override
   void onReady() async {
     super.onReady();
-    getMakes();
-    getInsurers();
 
     try {
       if (Get.arguments['numOrder'] != null) {
@@ -139,16 +140,16 @@ class OrderController extends GetxController {
         print(
             "order:::::::::::::::::::::::::::::::::::::::::::::::::::::::::: $order");
         fillOrder(order);
+        createUpdate.value = !createUpdate.value;
       }
     } catch (error) {
       print(error);
 
-      Get.offNamed("/home", arguments: {"error": "error"});
+      Get.offAllNamed("/home", arguments: {"error": "error"});
     }
   }
 
   void fillOrder(Map<String, dynamic> order) async {
-    canEdit.value = false;
     orderId.value = order['order_id'];
     folio.value = order['folio'];
     policy.value = order['policy'];
@@ -181,6 +182,10 @@ class OrderController extends GetxController {
     clientName.value = clientTemp["name"];
     clientPhone.value = clientTemp["phone"];
     clientEmail.value = clientTemp["email"];
+    getModelsByMake(makeId.value.toString());
+    getAdjustersByInsurer(insurerId.value);
+
+    canEdit.value = false;
   }
 
   void start() {

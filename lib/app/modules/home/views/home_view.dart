@@ -24,7 +24,7 @@ class HomeView extends GetView<HomeController> {
               backgroundColor: WidgetStateProperty.all(Colors.white70),
               onSubmitted: (value) {
                 if (value != "") {
-                  Get.offNamed("/order", arguments: {"numOrder": value});
+                  Get.toNamed("/order", arguments: {"numOrder": value});
                 }
               },
             ),

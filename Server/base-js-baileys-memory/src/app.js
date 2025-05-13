@@ -56,7 +56,7 @@ const welcomeFlow = addKeyword(["hi", "hello", "hola", EVENTS.WELCOME])
         // Aquí puedes procesar los datos según tus necesidades
         if (orderData) {
           await flowDynamic(
-            `*Hola ${Clientdata.name}* \n\n*Su vehiculo es un ${responseMake.data.Nombre} ${responseModel.data.model}* \n\n*El estado de su vehiculo es: ${orderData.status}*`
+            `*Hola ${Clientdata.name} Su Unidad es  ${responseMake.data.Nombre} ${responseModel.data.model} El estado de su vehiculo es: ${orderData.status}`
           );
         }
       } catch (error) {
